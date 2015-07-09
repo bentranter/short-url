@@ -1,0 +1,36 @@
+{
+  "name": "short-url",
+  "version": "0.0.1",
+  "description": "URL shortener",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bentranter/short-url.git"
+  },
+  "keywords": [
+    "URL",
+    "short"
+  ],
+  "author": "Ben Tranter <bwtrante@lakeheadu.ca>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bentranter/short-url/issues"
+  },
+  "homepage": "https://github.com/bentranter/short-url#readme",
+  "dependencies": {
+    "body-parser": "^1.13.2",
+    "express": "^4.13.1",
+    "multer": "^0.1.8",
+    "thinky": "^2.0.8"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.5"
+  }
+}
