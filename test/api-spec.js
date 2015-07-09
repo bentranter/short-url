@@ -9,25 +9,21 @@ var link = '';
 
 describe('url shortener', function() {
 
-  it('shorten the url', function(done) {
+  it('should shorten the url', function(done) {
     request(url)
       .post('/www.google.com')
       .expect(201)
       .end(function(err, res) {
-        try {
-          link = JSON.parse(res.text).link;
-        } catch(e) {
-          return done(e);
-        }
         if (err)
           return done(err);
+        link = res.body.link;
         done();
       });
   });
 
-  it('redirect to the original url', function(done) {
-    request(url)
-      .get('/' + link)
+  it('should redirect to the original url', function(done) {
+    request(link)
+      .get('/')
       .expect(302)
       .end(function(err, res) {
         if (err)

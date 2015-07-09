@@ -12,10 +12,9 @@ var thinky = require('thinky')({
 var app = express();
 
 // Your URL shortener's URL
-var baseURL = 'http://127.0.0.1/';
+var baseURL = 'http://127.0.0.1:3000/';
 
 // RethinkDB/Thinky refs
-var r = thinky.r;
 var type = thinky.type;
 
 //Config
@@ -55,7 +54,7 @@ app.post('/:link', function(req, res) {
       link: req.params.link
     })
     .then(function(doc) {
-      res.status(201).json({ link: doc.id });
+      res.status(201).json({ link: baseURL + doc.id });
     })
     .error(function(err) {
       res.status(400).json({ error: err });
