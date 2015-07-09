@@ -15,17 +15,17 @@ A URL shortener in Node with RethinkDB & Express.
 
 There are only two methods:
 
-###### Create a new shortened URL
+#### Create a new shortened URL
 
-Send a POST request to `http://127.0.0.1:3000/<url-to-shorten->`, where `<url-to-shorten>` follows either `www.something.com` or `something.com`. **Do not include the `http://`**, it will upset the shortener.
+Send a POST request to `http://127.0.0.1:3000/<url-to-shorten>`, where `<url-to-shorten>` follows either `www.something.com` or `something.com`. **Do not include the `http://`**, it will upset the shortener.
 
 You'll get a JSON response with your shortened URL.
 
-###### Access a URL that has been shortened
+#### Access a URL that has been shortened
 
 Send a GET request to `http://127.0.0.1:3000/<short-url>`, where `<short-url>` is the 8 character string of garbage that your link has become. It'll redirect to the orginal URL.
 
-###### Changing the base URL
+#### Changing the base URL
 
 Just go into `index.js` and change the variable `baseURL` (on line 16) to whatever you need it to be (ie, your domain).
 
