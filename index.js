@@ -1,7 +1,8 @@
 // Module deps
+var bodyParser = require('body-parser');
 var express = require('express');
 var multer  = require('multer');
-var bodyParser = require('body-parser');
+var crypto = require('crypto');
 var thinky = require('thinky')({
   host: 'localhost',
   port: '28015', // This is the default
@@ -9,6 +10,13 @@ var thinky = require('thinky')({
 });
 
 var app = express();
+
+// Your URL shortener's URL
+var baseURL = 'http://127.0.0.1/';
+
+// RethinkDB/Thinky refs
+var r = thinky.r;
+var type = thinky.type;
 
 //Config
 app.set('json spaces', 2);
@@ -25,12 +33,48 @@ app.use(function(req, res, next) {
 });
 
 // Model
+var Url = thinky.createModel('Url', {
+  id: type.string().required(),
+  link: type.string().required()
+});
+
+// Gen random short string
+function genLink() {
+  return crypto.randomBytes(Math.ceil(8/2))
+    .toString('hex')
+    .slice(0, 8);
+}
 
 // Endpoints
-app.get('/', function(req, res) {
-  res.json({ message: 'Yay' });
+app.post('/:link', function(req, res) {
+  var link = genLink();
+
+  Url
+    .save({
+      id: link,
+      link: req.params.link
+    })
+    .then(function(doc) {
+      res.status(201).json({ link: doc.id });
+    })
+    .error(function(err) {
+      res.status(400).json({ error: err });
+    });
+});
+
+app.get('/:link', function(req, res) {
+
+  Url
+    .get(req.params.link)
+    .run()
+    .then(function(doc) {
+      res.redirect('http://' + doc.link);
+    })
+    .error(function(err) {
+      res.status(400).json({ error: err });
+    });
 });
 
 app.listen(3000, function() {
-  console.log('Express started on 3000');
+  console.log('Express started on port 3000');
 });
