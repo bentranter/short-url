@@ -45,6 +45,12 @@ function genLink() {
 }
 
 // Endpoints
+app.get('/', function(req, res) {
+  res.json({
+    link_url: baseURL + ':link'
+  });
+})
+
 app.post('/:link', function(req, res) {
   var link = genLink();
 
