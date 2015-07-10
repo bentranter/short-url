@@ -8,6 +8,9 @@
   },
   "scripts": {
     "start": "node index.js",
+    "start base64": "nodex index.js base64",
+    "start hex": "node index.js",
+    "start emoji": "node index.js emoji",
     "test": "mocha test/"
   },
   "repository": {

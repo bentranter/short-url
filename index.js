@@ -12,22 +12,13 @@ var thinky = require('thinky')({
 
 var app = express();
 
-// Your URL shortener's URL
-var baseURL = 'http://127.0.0.1:3000/';
-
-// Pass seed argument to CLI
-var seed = process.argv.slice(2)[0];
-
-// RethinkDB/Thinky refs
-var type = thinky.type;
-
-//Config
+// Eexpress config
 app.set('json spaces', 2);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(multer());
 
-// Enable CORS
+// Enable CORS for all endpoints
 app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, HEAD');
@@ -35,11 +26,17 @@ app.use(function(req, res, next) {
   next();
 });
 
+// RethinkDB/Thinky refs
+var type = thinky.type;
+
 // Model
 var Url = thinky.createModel('Url', {
   id: type.string().required(),
   link: type.string().required()
 });
+
+// Your URL shortener's URL
+var baseURL = 'http://127.0.0.1:3000/';
 
 /**
  * Gen random short string from a seed.
@@ -47,13 +44,14 @@ var Url = thinky.createModel('Url', {
  * @param {String} the name of the seed
  * @return {String} a random string
  */
-function genLink(seed, len) {
-  // Make seed arg optional
-  seed = seed || '';
+function genLink() {
+  // Seeds
+  var seed = process.argv.slice(2)[0] ? process.argv.slice(2)[0] : 'hex';
+  var len = process.argv.slice(2)[1] ? process.argv.slice(2)[1] : 8;
 
   // Generate random emoji string
   if (seed === 'emoji') {
-    return '';
+    return genEmoji(len);
   }
   
   // Generate random base64 string
@@ -65,7 +63,7 @@ function genLink(seed, len) {
       .replace(/\//g, '0');
   }
 
-  // Default
+  // Default is hex
   else {
     return crypto.randomBytes(Math.ceil(len/2))
     .toString('hex')
@@ -99,8 +97,6 @@ function genEmoji(len) {
 function randomEmoji() {
   return Math.floor(Math.random() * (emojiList.length));
 }
-
-console.log(genEmoji(3));
 
 // Endpoints
 app.get('/', function(req, res) {
