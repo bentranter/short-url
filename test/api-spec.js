@@ -31,4 +31,15 @@ describe('url shortener', function() {
         done();
       });
   });
+
+  it('should get the stats', function(done) {
+    request(url)
+      .get('/stats')
+      .expect(200)
+      .end(function(err, res) {
+        if (err)
+          return done(err);
+        done();
+      });
+  });
 });

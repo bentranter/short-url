@@ -28,12 +28,20 @@ app.use(function(req, res, next) {
 
 // RethinkDB/Thinky refs
 var type = thinky.type;
+var r = thinky.r;
 
 // Model
 var Url = thinky.createModel('Url', {
   id: type.string().required(),
-  link: type.string().required()
+  link: type.string().required(),
+  timesVisited: type.number().default(0),
+  lastVisitedAt: type.date(),
+  createdAt: type.date().default(r.now)
 });
+
+// Ensure index so we can `orderBy`
+// `timesVisited`
+Url.ensureIndex('timesVisited');
 
 // Your URL shortener's URL
 var baseURL = 'http://127.0.0.1:3000/';
@@ -105,11 +113,20 @@ app.get('/', function(req, res) {
   });
 });
 
+app.get('/stats', function(req, res) {
+  Url.orderBy(r.desc('timesVisited'))
+    .run()
+    .then(function(docs) {
+      res.json(docs);
+    }).error(function(err) {
+      res.status(400).json({ error: err });
+    });
+});
+
 app.post('/:link', function(req, res) {
   var link = genLink();
 
-  Url
-    .save({
+  Url.save({
       id: link,
       link: req.params.link
     })
@@ -122,9 +139,11 @@ app.post('/:link', function(req, res) {
 });
 
 app.get('/:link', function(req, res) {
-
-  Url
-    .get(req.params.link)
+  Url.get(req.params.link)
+    .update({
+      timesVisited: r.row('timesVisited').add(1),
+      lastVisitedAt: r.now()
+    })
     .run()
     .then(function(doc) {
       res.redirect('http://' + doc.link);

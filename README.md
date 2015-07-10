@@ -25,7 +25,7 @@ To **access a URL that has been shortened**, send a GET request to `http://127.0
 
 #### Changing the base URL
 
-Just go into `index.js` and change the variable `baseURL` (on line 16) to whatever you need it to be (ie, your domain).
+Just go into `index.js` and change the variable `baseURL` to whatever you need it to be (ie, your domain).
 
 ### Tests
 
