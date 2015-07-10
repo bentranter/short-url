@@ -106,6 +106,25 @@ function randomEmoji() {
   return Math.floor(Math.random() * (emojiList.length));
 }
 
+/**
+ * Gets the stats for each link the DB,
+ * ordered by `timesVisited`.
+ */
+function getStats(req, res) {
+  var offset = req.params.offset ? parseInt(req.params.offset) : 0;
+  var limit = req.params.limit ? parseInt(req.params.limit) : 50;
+
+  Url.orderBy(r.desc('timesVisited'))
+    .skip(offset)
+    .limit(limit)
+    .run()
+    .then(function(docs) {
+      res.json(docs);
+    }).error(function(err) {
+      res.status(400).json({ error: err });
+    });
+}
+
 // Endpoints
 app.get('/', function(req, res) {
   res.json({
@@ -114,13 +133,11 @@ app.get('/', function(req, res) {
 });
 
 app.get('/stats', function(req, res) {
-  Url.orderBy(r.desc('timesVisited'))
-    .run()
-    .then(function(docs) {
-      res.json(docs);
-    }).error(function(err) {
-      res.status(400).json({ error: err });
-    });
+  getStats(req, res);
+});
+
+app.get('/stats/:offset/:limit', function(req, res) {
+  getStats(req, res);
 });
 
 app.post('/:link', function(req, res) {

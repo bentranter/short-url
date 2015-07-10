@@ -17,11 +17,13 @@ Confused by the arguments that come after `$ node index.js`? See the *usage* sec
 
 When you start the server by running `$ node index.js`, you can optionally add two arguments. The first argument decides how the short URLs should appear. It can either be `hex`, `base64`, or `emoji`. The second argument decides how long the string that is your short URL is.
 
-For example, if ran `$ node index.js base64 12`, your URLs will look something like `http:<yourdomain.com>/90e524b77bb0`. If you ran `$ node index.js emoji 5`, they'll look something like `http://<yourdomain.com>/😨😨😰😧😊`.
+For example, if you ran `$ node index.js base64 12`, your URLs will look something like `http:<yourdomain.com>/90e524b77bb0`. If you ran `$ node index.js emoji 5`, they'll look something like `http://<yourdomain.com>/😨😨😰😧😊`.
 
 To **create a shortened URL**, send a POST request to `http://127.0.0.1:3000/<url-to-shorten>`, where `<url-to-shorten>` follows either `www.something.com` or `something.com`. **Do not include the `http://`**, it will upset the shortener. You'll get a JSON response with your shortened URL.
 
 To **access a URL that has been shortened**, send a GET request to `http://127.0.0.1:3000/<short-url>`, where `<short-url>` is the 8 character string of garbage that your link has become. It'll redirect to the orginal URL.
+
+To get some very basic stats, send a GET request to `http:127.0.0.1:3000/stats`. You can optionally include an *offset*, and a *limit*, so you don't get too many results at once. To do so, send a GET request to `http:127.0.0.1:3000/stats/<offset>/<limit>`, where the offset is how many records you want to skip, and the limit is the max number of records you want returned.
 
 #### Changing the base URL
 
