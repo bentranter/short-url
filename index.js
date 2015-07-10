@@ -1,5 +1,6 @@
 // Module deps
 var bodyParser = require('body-parser');
+var emojiList = require('./emoji');
 var express = require('express');
 var multer  = require('multer');
 var crypto = require('crypto');
@@ -13,6 +14,9 @@ var app = express();
 
 // Your URL shortener's URL
 var baseURL = 'http://127.0.0.1:3000/';
+
+// Pass seed argument to CLI
+var seed = process.argv.slice(2)[0];
 
 // RethinkDB/Thinky refs
 var type = thinky.type;
@@ -37,19 +41,73 @@ var Url = thinky.createModel('Url', {
   link: type.string().required()
 });
 
-// Gen random short string
-function genLink() {
-  return crypto.randomBytes(Math.ceil(8/2))
+/**
+ * Gen random short string from a seed.
+ *
+ * @param {String} the name of the seed
+ * @return {String} a random string
+ */
+function genLink(seed, len) {
+  // Make seed arg optional
+  seed = seed || '';
+
+  // Generate random emoji string
+  if (seed === 'emoji') {
+    return '';
+  }
+  
+  // Generate random base64 string
+  if (seed.toLowerCase === 'base64') {
+    return  crypto.randomBytes(Math.ceil(len * 3/4))
+      .toString('base64')
+      .slice(0, len)
+      .replace(/\+/g, '0')
+      .replace(/\//g, '0');
+  }
+
+  // Default
+  else {
+    return crypto.randomBytes(Math.ceil(len/2))
     .toString('hex')
-    .slice(0, 8);
+    .slice(0, len);
+  }
 }
+
+/**
+ * Generate a random string of emojis.
+ *
+ * @param {Int} the length of the
+ * random string
+ * @return {String} the random emoji
+ * string
+ */
+function genEmoji(len) {
+  var emojiArr = [];
+  var i;
+  for (i = 0; i < len; i++) {
+    emojiArr[i] = emojiList[randomEmoji()];
+  }
+  return emojiArr.join('');
+}
+
+/**
+ * Generate a random number between 1
+ * and the length of the emoji list.
+ *
+ * @return the random number
+ */
+function randomEmoji() {
+  return Math.floor(Math.random() * (emojiList.length));
+}
+
+console.log(genEmoji(3));
 
 // Endpoints
 app.get('/', function(req, res) {
   res.json({
     link_url: baseURL + ':link'
   });
-})
+});
 
 app.post('/:link', function(req, res) {
   var link = genLink();
