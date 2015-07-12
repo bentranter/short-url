@@ -136,6 +136,8 @@ app.get('/stats', function(req, res) {
   getStats(req, res);
 });
 
+// Only way to do endpoints with
+// optional params
 app.get('/stats/:offset/:limit', function(req, res) {
   getStats(req, res);
 });
@@ -151,7 +153,9 @@ app.post('/:link', function(req, res) {
       res.status(201).json({ link: baseURL + doc.id });
     })
     .error(function(err) {
-      res.status(400).json({ error: err });
+      // This can only be a duplicate
+      // primary key error
+      res.status(400).json({ error: 'Link is already in use, please try again.' });
     });
 });
 
